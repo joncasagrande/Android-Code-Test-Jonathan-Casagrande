@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="viewModel"
+            type="servicefusion.com.androidcodetestjonathanfilho.model.Contact"/>
+    </data>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:paddingStart="20dp"
+            android:text="@{viewModel.name}"/>
+    </LinearLayout>
+</layout>
