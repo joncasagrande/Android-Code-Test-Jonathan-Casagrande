@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:text="@string/add_fields"
+        android:padding="10dp"
+        android:gravity="center_horizontal"
+        android:textStyle="bold" />
+    <Button
+        android:id="@+id/button"
+        style="@style/SlidingButtons"
+        android:text="@string/add_phone"
+        android:onClick="addPhone"/>
+
+    <Button
+        android:id="@+id/button2"
+        style="@style/SlidingButtons"
+        android:text="@string/add_email"
+        android:onClick="addEmail"/>
+
+    <Button
+        android:id="@+id/button3"
+        style="@style/SlidingButtons"
+        android:text="@string/add_address"
+        android:onClick="addAddress"/>
+
+    <!--<Button
+        android:id="@+id/button4"
+        style="@style/SlidingButtons"
+        android:text="@string/add_date_of_birth"
+        android:onClick="addDob"/>-->
+</LinearLayout>

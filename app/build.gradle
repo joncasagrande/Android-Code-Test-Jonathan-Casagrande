@@ -37,12 +37,17 @@ dependencies {
     })
     compile "com.android.support:appcompat-v7:${rootProject.ext.AndroidSupportVersion}"
     compile "com.android.support:recyclerview-v7:${rootProject.ext.AndroidSupportVersion}"//26.+
-
+    compile "com.android.support:design:${rootProject.ext.AndroidSupportVersion}"
     compile "com.code-troopers.betterpickers:library:${rootProject.ext.BetterPickersVersion}"//3.1.0
 
-    compile 'com.jakewharton:butterknife:7.0.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+
+    compile "com.jakewharton:butterknife:${rootProject.ext.ButterKnifeVersion}"
+
+    //NavigationDrawer
+    compile "com.sothree.slidinguppanel:library:${rootProject.ext.SlidingPanelVersion}"
 
 
     testCompile 'junit:junit:4.12'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 }

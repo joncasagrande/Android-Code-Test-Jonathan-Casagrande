@@ -15,6 +15,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import servicefusion.com.androidcodetestjonathanfilho.R;
+import servicefusion.com.androidcodetestjonathanfilho.Util.SFConstants;
 import servicefusion.com.androidcodetestjonathanfilho.model.Contact;
 import servicefusion.com.androidcodetestjonathanfilho.ui.ContactActivity;
 
@@ -61,7 +62,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
             holder.monitorLayout.setOnClickListener(view -> {
                 Intent intent = new Intent(ctx, ContactActivity.class);
-                intent.putExtra("CONTACT", contact.getId());
+                intent.putExtra(SFConstants.CONTACT, contact.getId());
                 ctx.startActivity(intent);
             });
         }

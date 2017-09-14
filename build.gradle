@@ -24,6 +24,8 @@ ext{
     AndroidSupportVersion = "26.+"
     BetterPickersVersion = "3.1.0"
     BindingVersion = "2.2.0"
+    ButterKnifeVersion = "7.0.1"
+    SlidingPanelVersion = "3.3.1"
 
 }
 
