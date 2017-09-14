@@ -1,25 +1,26 @@
 package servicefusion.com.androidcodetestjonathanfilho.model;
 
-
-import android.os.Parcel;
-import android.os.Parcelable;
+import io.realm.RealmObject;
 
 /**
  * Created by joncasagrande on 13/09/17.
  */
-public class Address implements Parcelable {
-    protected String street;
-    protected String number;
-    protected String zipcode;
+public class Address extends RealmObject{
+    private String street;
+    private String number;
+    private String zipcode;
+    private String typeDescription;
 
-    public Address(String street, String number, String zipcode) {
+    public Address( String street, String number, String zipcode, String typeDescription) {
         this.street = street;
         this.number = number;
         this.zipcode = zipcode;
+        this.typeDescription = typeDescription;
     }
 
     public Address() {
     }
+
 
     public String getStreet() {
         return street;
@@ -45,34 +46,11 @@ public class Address implements Parcelable {
         this.zipcode = zipcode;
     }
 
-
-    @Override
-    public int describeContents() {
-        return 0;
+    public String getTypeDescription() {
+        return typeDescription;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.street);
-        dest.writeString(this.number);
-        dest.writeString(this.zipcode);
+    public void setTypeDescription(String typeDescription) {
+        this.typeDescription = typeDescription;
     }
-
-    protected Address(Parcel in) {
-        this.street = in.readString();
-        this.number = in.readString();
-        this.zipcode = in.readString();
-    }
-
-    public static final Parcelable.Creator<Address> CREATOR = new Parcelable.Creator<Address>() {
-        @Override
-        public Address createFromParcel(Parcel source) {
-            return new Address(source);
-        }
-
-        @Override
-        public Address[] newArray(int size) {
-            return new Address[size];
-        }
-    };
 }

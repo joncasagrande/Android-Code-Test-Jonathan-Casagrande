@@ -1,23 +1,20 @@
 package servicefusion.com.androidcodetestjonathanfilho.model;
-
-
-import android.os.Parcel;
-import android.os.Parcelable;
+import io.realm.RealmObject;
 
 /**
  * Created by joncasagrande on 13/09/17.
  */
+public class PhoneNumber extends RealmObject{
 
-public class PhoneNumber implements Parcelable {
-    protected String number;
-    protected Type type;
+    private String number;
+    private String typeDescription;
 
     public PhoneNumber() {
     }
 
-    public PhoneNumber(String number, Type type) {
+    public PhoneNumber(String number, String type) {
         this.number = number;
-        this.type = type;
+        this.typeDescription = type;
     }
 
     public String getNumber() {
@@ -28,41 +25,12 @@ public class PhoneNumber implements Parcelable {
         this.number = number;
     }
 
-    public Type getType() {
-        return type;
+    public String getTypeDescription() {
+        return typeDescription;
     }
 
-    public void setType(Type type) {
-        this.type = type;
+    public void setTypeDescription(String type) {
+        this.typeDescription = type;
     }
 
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.number);
-        dest.writeInt(this.type == null ? -1 : this.type.ordinal());
-    }
-
-    protected PhoneNumber(Parcel in) {
-        this.number = in.readString();
-        int tmpType = in.readInt();
-        this.type = tmpType == -1 ? null : Type.values()[tmpType];
-    }
-
-    public static final Parcelable.Creator<PhoneNumber> CREATOR = new Parcelable.Creator<PhoneNumber>() {
-        @Override
-        public PhoneNumber createFromParcel(Parcel source) {
-            return new PhoneNumber(source);
-        }
-
-        @Override
-        public PhoneNumber[] newArray(int size) {
-            return new PhoneNumber[size];
-        }
-    };
 }
