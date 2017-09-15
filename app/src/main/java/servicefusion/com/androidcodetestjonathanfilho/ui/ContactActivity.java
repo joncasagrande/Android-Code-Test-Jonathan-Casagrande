@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -21,8 +22,12 @@ import android.widget.TextView;
 import com.codetroopers.betterpickers.datepicker.DatePickerBuilder;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 
 import butterknife.Bind;
@@ -48,10 +53,14 @@ public class ContactActivity extends AppCompatActivity {
 
     @Bind(R.id.sliding_layout)
     SlidingUpPanelLayout slidingUpPanelLayout;
+    @Bind(R.id.deleteBT)Button deleteBT;
     LinearLayout phoneLL;
     LinearLayout emailLL;
     LinearLayout addressLL;
 
+    List<LinearLayout> addedViews;
+
+    Contact contact;
     Date date;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,8 +90,12 @@ public class ContactActivity extends AppCompatActivity {
 
         if(getIntent().hasExtra(SFConstants.CONTACT)){
             loadContact(getIntent().getExtras().getLong(SFConstants.CONTACT));
+            deleteBT.setVisibility(View.VISIBLE);
         }
-
+        addedViews = new ArrayList<>();
+        addedViews.add(phoneLL);
+        addedViews.add(emailLL);
+        addedViews.add(addressLL);
     }
     private void createLayouts(){
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -92,6 +105,7 @@ public class ContactActivity extends AppCompatActivity {
 
         phoneLL.addView(createLLHeader(R.string.phone));
 
+        phoneLL.setVisibility(View.GONE);
 
         emailLL = new LinearLayout(this);
         emailLL.setOrientation(LinearLayout.VERTICAL);
@@ -99,11 +113,15 @@ public class ContactActivity extends AppCompatActivity {
 
         emailLL.addView(createLLHeader(R.string.email));
 
+        emailLL.setVisibility(View.GONE);
+
         addressLL = new LinearLayout(this);
         addressLL.setOrientation(LinearLayout.VERTICAL);
         addressLL.setLayoutParams(layoutParams);
 
         addressLL.addView(createLLHeader(R.string.address));
+
+        addressLL.setVisibility(View.GONE);
 
         fieldsLL.addView(phoneLL);
         fieldsLL.addView(emailLL);
@@ -115,7 +133,13 @@ public class ContactActivity extends AppCompatActivity {
         headerTV.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         headerTV.setText(stringResId);
         return headerTV;
-
+    }
+    public void deleteBT(View view){
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        contact.deleteFromRealm();
+        realm.commitTransaction();
+        finish();
     }
     public void addPhone(View view){
         addPhoneRow(null);
@@ -132,15 +156,39 @@ public class ContactActivity extends AppCompatActivity {
 
     private void loadContact(Long contactId){
         Realm realm = Realm.getDefaultInstance();
-        Contact contact = realm.where(Contact.class)
+        contact = realm.where(Contact.class)
                                             .in("id", new Long[]{contactId})
                                             .findAll()
                                             .first();
         if(contact!= null){
             nameET.setText(contact.getName());
+            lastNameET.setText(contact.getLastName()== null ? "" : contact.getLastName());
+            if(contact.getDob()!= null) {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                dobET.setText(sdf.format(contact.getDob()));
+            }
+            if(contact.getEmails()!= null && contact.getEmails().size()> 0){
+                Iterator email = contact.getEmails().iterator();
+                while (email.hasNext()){
+                    addEmailRow((Email)email.next());
+                }
+            }
+            if(contact.getPhoneNumbers()!= null && contact.getPhoneNumbers().size()> 0){
+                Iterator phone = contact.getPhoneNumbers().iterator();
+                while (phone.hasNext()){
+                    addPhoneRow((PhoneNumber) phone.next());
+                }
+
+            }
+            if(contact.getAddresses()!= null && contact.getAddresses().size()> 0){
+                Iterator address = contact.getAddresses().iterator();
+                while (address.hasNext()){
+                    addAddressRow((Address) address.next());
+                }
+
+            }
+
         }
-
-
     }
 
     @Override
@@ -155,32 +203,59 @@ public class ContactActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.new_contact:
-                createContact();
+                    createOrUpdateContact();
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private void createContact(){
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        Contact contact = realm.createObject(Contact.class, UUID.randomUUID().getMostSignificantBits());
-        contact.setName(nameET.getText().toString());
-        contact.setLastName(lastNameET.getText().toString());
-        contact.setDob(date);
+    private void createOrUpdateContact(){
+        if(isContactValid()) {
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            if(contact== null)
+            contact = realm.createObject(Contact.class, UUID.randomUUID().getMostSignificantBits());
+            for (LinearLayout linearLayout : addedViews) {
+                for (int i = 1; i < linearLayout.getChildCount(); i++) {
+                    String type = ((TextView) linearLayout.getChildAt(0)).getText().toString();
+                    LinearLayout rowLL = (LinearLayout) linearLayout.getChildAt(i);
+                    String typeDescription = ((Spinner) rowLL.getChildAt(0)).getSelectedItem().toString();
+                    String value = ((EditText) rowLL.getChildAt(1)).getText().toString();
+                    switch (type) {
+                        case "Email":
+                            contact.getEmails().add(new Email(value, typeDescription));
+                            break;
+                        case "Phone":
+                            contact.getPhoneNumbers().add(new PhoneNumber(value, typeDescription));
+                            break;
+                        case "Address":
+                            contact.getAddresses().add(new Address(value, typeDescription));
+                            break;
+                    }
+                }
+            }
+            contact.setName(nameET.getText().toString());
+            contact.setLastName(lastNameET.getText().toString());
+            contact.setDob(date);
 
-        realm.commitTransaction();
-        finish();
+            realm.commitTransaction();
+            finish();
+        }
     }
 
-    private void addPhoneRow(@Nullable PhoneNumber phoneNumber){
-        EditText phoneET = new EditText(this);
-        phoneET.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT,1f));
-        phoneET.setInputType(InputType.TYPE_CLASS_PHONE);
-        phoneET.setHint(R.string.phone);
+    private boolean isContactValid(){
+        if(nameET.getText().toString().isEmpty()){
+            nameET.setError(getString(R.string.missing, getString(R.string.first_name)));
+            return false;
+        }
+        return true;
+    }
 
+
+    private void addPhoneRow(@Nullable PhoneNumber phoneNumber){
+        phoneLL.setVisibility(View.VISIBLE);
+        EditText phoneET = createEditText(InputType.TYPE_CLASS_PHONE, R.string.phone);
         Spinner spinner = createTypeSpinner();
 
         if(phoneNumber != null){
@@ -193,18 +268,13 @@ public class ContactActivity extends AppCompatActivity {
         rowLL.addView(phoneET);
 
         phoneLL.addView(rowLL);
-
-        phoneLL.invalidate();
     }
 
     private void addEmailRow(Email email){
-
-        EditText emailET = new EditText(this);
-        emailET.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT,1f));
-        emailET.setInputType(InputType.TYPE_CLASS_PHONE);
-        emailET.setHint(R.string.email);
-
+        emailLL.setVisibility(View.VISIBLE);
+        EditText emailET = createEditText(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, R.string.email);
         Spinner spinner = createTypeSpinner();
+
         if(email!= null){
             emailET.setText(email.getEmail());
             setSelectedType(spinner, email.getTypeDescription());
@@ -220,12 +290,10 @@ public class ContactActivity extends AppCompatActivity {
     }
 
     private void addAddressRow(@Nullable Address address){
-        EditText addressET = new EditText(this);
-        addressET.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT,1f));
-        addressET.setInputType(InputType.TYPE_CLASS_PHONE);
-        addressET.setHint(R.string.address);
-
+        addressLL.setVisibility(View.VISIBLE);
+        EditText addressET = createEditText(InputType.TYPE_CLASS_TEXT, R.string.address);
         Spinner spinner = createTypeSpinner();
+
         if(address!= null){
             addressET.setText(address.getAddress());
             setSelectedType(spinner, address.getTypeDescription());
@@ -238,6 +306,14 @@ public class ContactActivity extends AppCompatActivity {
         addressLL.addView(rowLL);
 
         addressLL.invalidate();
+    }
+
+    private EditText createEditText(int inputType, int hint){
+        EditText editText = new EditText(this);
+        editText.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT,1f));
+        editText.setInputType(inputType);
+        editText.setHint(hint);
+        return editText;
     }
 
     private Spinner createTypeSpinner(){

@@ -61,30 +61,32 @@ public class Contact extends RealmObject{
         this.dob = dob;
     }
 
-/*
-    public List<Email> getEmails() {
+    public RealmList<Email> getEmails() {
         return emails;
     }
 
-    public void setEmails(List<Email> emails) {
+    public void setEmails(RealmList<Email> emails) {
         this.emails = emails;
     }
 
-
-    public List<Address> getAddresses() {
+    public RealmList<Address> getAddresses() {
         return addresses;
     }
 
-    public void setAddresses(List<Address> addresses) {
+    public void setAddresses(RealmList<Address> addresses) {
         this.addresses = addresses;
     }
 
-    public List<PhoneNumber> getPhoneNumbers() {
+    public RealmList<PhoneNumber> getPhoneNumbers() {
         return phoneNumbers;
     }
 
-    public void setPhoneNumbers(List<PhoneNumber> phoneNumbers) {
+    public void setPhoneNumbers(RealmList<PhoneNumber> phoneNumbers) {
         this.phoneNumbers = phoneNumbers;
     }
-*/
+
+    @Override
+    public String toString() {
+        return name + " "+ lastName;
+    }
 }

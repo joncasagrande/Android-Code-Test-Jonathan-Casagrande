@@ -12,7 +12,7 @@ public class PhonenumberTest {
     @Before
     public void setUp() throws Exception {
         phoneNumber = new PhoneNumber();
-        phoneNumber.setType(Type.WORK);
+        phoneNumber.setTypeDescription(Type.WORK.toString());
         phoneNumber.setNumber("918 244 395");
     }
 
@@ -29,13 +29,13 @@ public class PhonenumberTest {
 
     @Test
     public void getType() throws Exception {
-        assertEquals("Should be the same", phoneNumber.getType(), Type.HOME);
+        assertEquals("Should be the same", phoneNumber.getTypeDescription(), Type.HOME.toString());
     }
 
     @Test
     public void setType() throws Exception {
-        phoneNumber.setType(Type.WORK);
-        assertEquals("Should had setwork type", phoneNumber.getType(), Type.WORK);
+        phoneNumber.setTypeDescription(Type.WORK.toString());
+        assertEquals("Should had setwork type", phoneNumber.getTypeDescription(), Type.WORK.toString());
     }
 
 }

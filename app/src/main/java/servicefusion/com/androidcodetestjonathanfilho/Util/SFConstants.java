@@ -6,4 +6,5 @@ package servicefusion.com.androidcodetestjonathanfilho.Util;
 
 public interface SFConstants {
     String CONTACT = "CONTACT";
+
 }

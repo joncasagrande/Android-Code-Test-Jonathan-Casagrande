@@ -58,7 +58,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         Contact contact = contacts.get(position);
         if(contact != null) {
 
-            holder.nameTV.setText(contact.getName());
+            holder.nameTV.setText(contact.toString());
 
             holder.monitorLayout.setOnClickListener(view -> {
                 Intent intent = new Intent(ctx, ContactActivity.class);
@@ -73,4 +73,56 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     public int getItemCount() {
         return contacts.size();
     }
+
+    public void animateTo(List<Contact> models) {
+        applyAndAnimateRemovals(models);
+        applyAndAnimateAdditions(models);
+        applyAndAnimateMovedItems(models);
+    }
+
+    private void applyAndAnimateRemovals(List<Contact> newModels) {
+        for (int i = contacts.size() - 1; i >= 0; i--) {
+            final Contact model = contacts.get(i);
+            if (!newModels.contains(model)) {
+                removeItem(i);
+            }
+        }
+    }
+
+    private void applyAndAnimateAdditions(List<Contact> newModels) {
+        for (int i = 0, count = newModels.size(); i < count; i++) {
+            final Contact model = newModels.get(i);
+            if (!contacts.contains(model)) {
+                addItem(i, model);
+            }
+        }
+    }
+
+    private void applyAndAnimateMovedItems(List<Contact> newModels) {
+        for (int toPosition = newModels.size() - 1; toPosition >= 0; toPosition--) {
+            final Contact model = newModels.get(toPosition);
+            final int fromPosition = contacts.indexOf(model);
+            if (fromPosition >= 0 && fromPosition != toPosition) {
+                moveItem(fromPosition, toPosition);
+            }
+        }
+    }
+    public Contact removeItem(int position) {
+        final Contact model = contacts.remove(position);
+        notifyItemRemoved(position);
+        return model;
+    }
+
+    public void addItem(int position, Contact model) {
+        contacts.add(position, model);
+        notifyItemInserted(position);
+    }
+
+    public void moveItem(int fromPosition, int toPosition) {
+        final Contact model = contacts.remove(fromPosition);
+        contacts.add(toPosition, model);
+        notifyItemMoved(fromPosition, toPosition);
+    }
+
+
 }

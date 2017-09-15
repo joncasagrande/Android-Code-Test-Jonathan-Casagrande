@@ -12,7 +12,7 @@ public class EmailTest {
     Email email;
     @Before
     public void setUp() throws Exception {
-        email = new Email("email@email.com", Type.HOME);
+        email = new Email("email@email.com", Type.HOME.toString());
 
     }
 
@@ -29,13 +29,13 @@ public class EmailTest {
 
     @Test
     public void getType() throws Exception {
-        assertEquals("Should be the same", email.getType(), Type.HOME);
+        assertEquals("Should be the same", email.getTypeDescription(), Type.HOME.toString());
     }
 
     @Test
     public void setType() throws Exception {
-        email.setType(Type.WORK);
-        assertEquals("Should had setwork type", email.getType(), Type.WORK);
+        email.setTypeDescription(Type.WORK.toString());
+        assertEquals("Should had setwork type", email.getTypeDescription(), Type.WORK.toString());
 
     }
 

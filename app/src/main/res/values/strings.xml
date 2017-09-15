@@ -17,5 +17,8 @@
     <string name="add_email">Add Email</string>
     <string name="add_address">Add Address</string>
     <string name="add_date_of_birth">Add Date of Birth</string>
+    <string name="missing">Missing value %1$s</string>
+    <string name="search_contact">Search</string>
+    <string name="delete">Delete</string>
 
 </resources>

@@ -15,7 +15,7 @@ public enum Type{
         this.name = name;
     }
 
-    public String getName(String name){
+    public String setName(String name){
         return name;
     }
 

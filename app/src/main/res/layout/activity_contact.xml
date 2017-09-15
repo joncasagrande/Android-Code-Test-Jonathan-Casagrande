@@ -67,6 +67,15 @@
                     android:inputType="date" />
             </LinearLayout>
         </ScrollView>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/delete"
+            android:background="@color/bpDarker_red"
+            android:textColor="@color/bpWhite"
+            android:id="@+id/deleteBT"
+            android:onClick="deleteBT"
+            android:visibility="gone"/>
     </LinearLayout>
     <include layout="@layout/include_slide_fields" />
 
